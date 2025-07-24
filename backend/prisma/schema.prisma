@@ -1,0 +1,162 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      UserRole @default(RADIOLOGIST)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  images      MedicalImage[]
+  annotations Annotation[]
+  auditLogs   AuditLog[]
+
+  @@map("users")
+}
+
+model Patient {
+  id        String   @id @default(cuid())
+  patientId String   @unique
+  name      String
+  age       Int
+  gender    Gender
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  images MedicalImage[]
+
+  @@map("patients")
+}
+
+model MedicalImage {
+  id           String    @id @default(cuid())
+  filename     String
+  originalName String
+  patientId    String
+  studyDate    DateTime
+  modality     Modality
+  bodyPart     String
+  url          String
+  s3Key        String
+  pixelSpacing Float?
+  width        Int
+  height       Int
+  fileSize     Int
+  mimeType     String
+  uploadedById String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  patient       Patient        @relation(fields: [patientId], references: [id])
+  uploadedBy    User           @relation(fields: [uploadedById], references: [id])
+  annotations   Annotation[]
+  aiDetections  AiDetection[]
+  auditLogs     AuditLog[]
+
+  @@map("medical_images")
+}
+
+model Annotation {
+  id            String         @id @default(cuid())
+  type          AnnotationType
+  coordinates   Json // Store as JSON: {x, y, width?, height?, x2?, y2?}
+  label         String
+  confidence    Float?
+  isAIGenerated Boolean        @default(false)
+  notes         String?
+  imageId       String
+  userId        String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Relations
+  image MedicalImage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  user  User         @relation(fields: [userId], references: [id])
+
+  @@map("annotations")
+}
+
+model AiDetection {
+  id          String   @id @default(cuid())
+  label       String
+  confidence  Float
+  boundingBox Json // Store as JSON: {x, y, width, height}
+  description String
+  severity    Severity
+  imageId     String
+  modelName   String
+  modelVersion String
+  createdAt   DateTime @default(now())
+
+  // Relations
+  image MedicalImage @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+  @@map("ai_detections")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  details   String
+  userId    String?
+  imageId   String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  user  User?         @relation(fields: [userId], references: [id])
+  image MedicalImage? @relation(fields: [imageId], references: [id])
+
+  @@map("audit_logs")
+}
+
+enum UserRole {
+  RADIOLOGIST
+  TECHNICIAN
+  RESIDENT
+  ADMIN
+}
+
+enum Gender {
+  M
+  F
+  OTHER
+}
+
+enum Modality {
+  X_RAY
+  CT
+  MRI
+  ULTRASOUND
+  MAMMOGRAPHY
+  PET
+  NUCLEAR
+}
+
+enum AnnotationType {
+  BOUNDING_BOX
+  MEASUREMENT
+  LABEL
+  SEGMENTATION
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}

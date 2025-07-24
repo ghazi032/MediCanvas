@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2025 Arslan Ghazi
+Copyright (c) 2024 MediCanvas Team
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,21 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+MEDICAL DISCLAIMER:
+
+This software is intended for educational and research purposes only. It is not 
+intended for clinical diagnosis, treatment, or any other medical purpose. The 
+software has not been evaluated or approved by the FDA or any other regulatory 
+body as a medical device.
+
+Users should not rely on this software for medical decisions. Always consult 
+with qualified healthcare professionals for medical advice, diagnosis, and 
+treatment. The developers and contributors of this software are not responsible 
+for any medical decisions made based on the use of this software.
+
+Any use of this software in a clinical or production medical environment 
+requires appropriate validation, regulatory approval, and compliance with 
+applicable medical device regulations.
